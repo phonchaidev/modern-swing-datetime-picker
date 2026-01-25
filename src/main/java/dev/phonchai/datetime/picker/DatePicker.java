@@ -715,7 +715,8 @@ public class DatePicker extends PanelPopupEditor
         if (editor != null) {
             JToolBar toolBar = new JToolBar();
             editorButton = new JButton(
-                    editorIcon != null ? editorIcon : Utils.createIcon("com/sfis/datetime/icon/calendar.svg", 0.48f));
+                    editorIcon != null ? editorIcon
+                            : Utils.createIcon("dev/phonchai/datetime/picker/icon/calendar.svg", 0.48f));
             toolBar.add(editorButton);
             editorButton.addActionListener(e -> {
                 if (editor.isEnabled()) {

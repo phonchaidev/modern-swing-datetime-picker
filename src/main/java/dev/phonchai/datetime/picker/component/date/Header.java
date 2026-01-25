@@ -92,11 +92,11 @@ public class Header extends JPanel {
     }
 
     protected Icon createDefaultBackIcon() {
-        return Utils.createIcon("com/sfis/datetime/icon/back.svg", 1f);
+        return Utils.createIcon("dev/phonchai/datetime/picker/icon/back.svg", 1f);
     }
 
     protected Icon createDefaultForwardIcon() {
-        return Utils.createIcon("com/sfis/datetime/icon/forward.svg", 1f);
+        return Utils.createIcon("dev/phonchai/datetime/picker/icon/forward.svg", 1f);
     }
 
     public void addDateControlListener(DateControlListener listener) {

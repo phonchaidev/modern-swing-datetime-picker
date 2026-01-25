@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2025 user.
+ * Copyright 2025 dev.phonchai
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,126 +27,205 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
+ * Font utility for the DateTime Picker library.
+ * <p>
+ * <b>Design Principle:</b> This library uses the host application's fonts by
+ * default,
+ * obtained from {@link UIManager}. No configuration is required - the picker
+ * will
+ * automatically match your application's look and feel.
+ * <p>
+ * <b>Font Resolution Order:</b>
+ * <ol>
+ * <li>UIManager override key (if host app explicitly sets it)</li>
+ * <li>UIManager "Label.font" (standard Swing font)</li>
+ * <li>System default font (fallback)</li>
+ * </ol>
+ * <p>
+ * <b>Optional Customization:</b>
+ * 
+ * <pre>{@code
+ * // Only if you want different fonts than your app's default
+ * AppFont.setBaseFont(new Font("Segoe UI", Font.PLAIN, 14));
+ * }</pre>
  *
- * @author user
+ * @author dev.phonchai
+ * @version 1.0.0
  */
-public class AppFont {
+public final class AppFont {
 
     private AppFont() {
+        // Prevent instantiation
     }
 
-    public static final Font BASE = new Font("TH SarabunPSK", Font.PLAIN, 20);
-    public static final Font HEADER = new Font("TH SarabunPSK", Font.BOLD, 22);
-    public static final Font DAY_LABEL = new Font("TH SarabunPSK", Font.BOLD, 20);   // weekdays heading
-    public static final Font DAY_BUTTON = new Font("TH SarabunPSK", Font.PLAIN, 20);  // วันที่แต่ละปุ่ม
-    public static final Font MONTH_BUTTON = new Font("TH SarabunPSK", Font.PLAIN, 22);
-    public static final Font YEAR_BUTTON = new Font("TH SarabunPSK", Font.PLAIN, 20);
-    public static final Font EDITOR = new Font("TH SarabunPSK", Font.PLAIN, 18);       // ตัวหนังสือใน JFormattedTextFieldแ
+    // ═══════════════════════════════════════════════════════════════════════════
+    // UIManager Keys (optional overrides)
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    private static final String UI_KEY_PREFIX = "dev.phonchai.DateTimePicker.";
+
+    /** UIManager key to override base font. */
+    public static final String UI_KEY_BASE_FONT = UI_KEY_PREFIX + "baseFont";
+
+    /** UIManager key to override header font (month/year display). */
+    public static final String UI_KEY_HEADER_FONT = UI_KEY_PREFIX + "headerFont";
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // Optional Setters (for host app customization)
+    // ═══════════════════════════════════════════════════════════════════════════
 
     /**
-     * UIManager keys to override fonts without modifying this library.
-     * Set these before creating the components (recommended), or call
-     * {@code SwingUtilities.updateComponentTreeUI(window)} after changing.
+     * Sets the base font for all picker components.
+     * <p>
+     * Call this before creating any DatePicker/TimePicker instances.
+     * If not called, the library uses the application's default font from
+     * UIManager.
+     *
+     * @param font the font to use
      */
-    public static final String UI_KEY_PREFIX = "SFIS.DateTimePicker.";
-    public static final String UI_KEY_BASE_FONT = UI_KEY_PREFIX + "baseFont";
-    public static final String UI_KEY_HEADER_FONT = UI_KEY_PREFIX + "headerFont";
-    public static final String UI_KEY_DAY_LABEL_FONT = UI_KEY_PREFIX + "dayLabelFont";
-    public static final String UI_KEY_DAY_BUTTON_FONT = UI_KEY_PREFIX + "dayButtonFont";
-    public static final String UI_KEY_MONTH_BUTTON_FONT = UI_KEY_PREFIX + "monthButtonFont";
-    public static final String UI_KEY_YEAR_BUTTON_FONT = UI_KEY_PREFIX + "yearButtonFont";
-
     public static void setBaseFont(Font font) {
         UIManager.put(UI_KEY_BASE_FONT, font);
     }
 
+    /**
+     * Sets a custom header font (month/year display).
+     *
+     * @param font the header font
+     */
     public static void setHeaderFont(Font font) {
         UIManager.put(UI_KEY_HEADER_FONT, font);
     }
 
-    public static void setDayLabelFont(Font font) {
-        UIManager.put(UI_KEY_DAY_LABEL_FONT, font);
-    }
+    // ═══════════════════════════════════════════════════════════════════════════
+    // Font Getters (used by picker components)
+    // ═══════════════════════════════════════════════════════════════════════════
 
-    public static void setDayButtonFont(Font font) {
-        UIManager.put(UI_KEY_DAY_BUTTON_FONT, font);
-    }
-
-    public static void setMonthButtonFont(Font font) {
-        UIManager.put(UI_KEY_MONTH_BUTTON_FONT, font);
-    }
-
-    public static void setYearButtonFont(Font font) {
-        UIManager.put(UI_KEY_YEAR_BUTTON_FONT, font);
-    }
-
-    public static Font resolveBaseFont(Component component) {
-        return resolveFont(component, UI_KEY_BASE_FONT, getDefaultUiFont(component, BASE));
-    }
-
-    public static Font resolveHeaderFont(Component component) {
-        Font base = resolveBaseFont(component);
-        Font derived = deriveFont(base, base.getStyle() | Font.BOLD, 2f);
-        return resolveFont(component, UI_KEY_HEADER_FONT, derived != null ? derived : HEADER);
-    }
-
-    public static Font resolveDayLabelFont(Component component) {
-        Font base = resolveBaseFont(component);
-        Font derived = deriveFont(base, base.getStyle() | Font.BOLD, 0f);
-        return resolveFont(component, UI_KEY_DAY_LABEL_FONT, derived != null ? derived : DAY_LABEL);
-    }
-
-    public static Font resolveDayButtonFont(Component component) {
-        Font base = resolveBaseFont(component);
-        return resolveFont(component, UI_KEY_DAY_BUTTON_FONT, base != null ? base : DAY_BUTTON);
-    }
-
-    public static Font resolveMonthButtonFont(Component component) {
-        Font base = resolveBaseFont(component);
-        Font derived = deriveFont(base, base.getStyle(), 2f);
-        return resolveFont(component, UI_KEY_MONTH_BUTTON_FONT, derived != null ? derived : MONTH_BUTTON);
-    }
-
-    public static Font resolveYearButtonFont(Component component) {
-        Font base = resolveBaseFont(component);
-        return resolveFont(component, UI_KEY_YEAR_BUTTON_FONT, base != null ? base : YEAR_BUTTON);
-    }
-
-    private static Font resolveFont(Component component, String uiKey, Font fallback) {
-        Font override = UIManager.getFont(uiKey);
+    /**
+     * Gets the base font for picker components.
+     * <p>
+     * Resolution: Override → UIManager "Label.font" → System default
+     *
+     * @return the base font, never null
+     */
+    public static Font getBaseFont() {
+        // 1. Check for explicit override
+        Font override = UIManager.getFont(UI_KEY_BASE_FONT);
         if (override != null) {
             return override;
         }
-        return fallback;
+
+        // 2. Use UIManager Label.font (matches host app)
+        Font labelFont = UIManager.getFont("Label.font");
+        if (labelFont != null) {
+            return labelFont;
+        }
+
+        // 3. Fallback to system default
+        return new Font(Font.SANS_SERIF, Font.PLAIN, 13);
     }
 
-    private static Font getDefaultUiFont(Component component, Font ultimateFallback) {
-        if (component != null) {
-            Font componentFont = component.getFont();
-            if (componentFont != null) {
-                return componentFont;
-            }
+    /**
+     * Gets the header font (bold, +2pt from base).
+     *
+     * @return the header font
+     */
+    public static Font getHeaderFont() {
+        Font override = UIManager.getFont(UI_KEY_HEADER_FONT);
+        if (override != null) {
+            return override;
         }
-        Font uiFont = UIManager.getFont("defaultFont");
-        if (uiFont != null) {
-            return uiFont;
-        }
-        uiFont = UIManager.getFont("Label.font");
-        if (uiFont != null) {
-            return uiFont;
-        }
-        return ultimateFallback;
+
+        Font base = getBaseFont();
+        return base.deriveFont(Font.BOLD, base.getSize2D() + 2f);
     }
 
-    private static Font deriveFont(Font base, int style, float addSize) {
-        if (base == null) {
-            return null;
-        }
-        float newSize = Math.max(1f, base.getSize2D() + addSize);
-        int newStyle = style;
-        if (base.getStyle() == newStyle && base.getSize2D() == newSize) {
-            return base;
-        }
-        return base.deriveFont(newStyle, newSize);
+    /**
+     * Gets the day label font (bold, same size as base).
+     *
+     * @return the day label font
+     */
+    public static Font getDayLabelFont() {
+        Font base = getBaseFont();
+        return base.deriveFont(Font.BOLD);
+    }
+
+    /**
+     * Gets the day button font (same as base).
+     *
+     * @return the day button font
+     */
+    public static Font getDayButtonFont() {
+        return getBaseFont();
+    }
+
+    /**
+     * Gets the month button font (+2pt from base).
+     *
+     * @return the month button font
+     */
+    public static Font getMonthButtonFont() {
+        Font base = getBaseFont();
+        return base.deriveFont(base.getSize2D() + 2f);
+    }
+
+    /**
+     * Gets the year button font (same as base).
+     *
+     * @return the year button font
+     */
+    public static Font getYearButtonFont() {
+        return getBaseFont();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // Deprecated methods (for backward compatibility)
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * @deprecated Use {@link #getBaseFont()} instead
+     */
+    @Deprecated
+    public static Font resolveBaseFont(Component component) {
+        return getBaseFont();
+    }
+
+    /**
+     * @deprecated Use {@link #getHeaderFont()} instead
+     */
+    @Deprecated
+    public static Font resolveHeaderFont(Component component) {
+        return getHeaderFont();
+    }
+
+    /**
+     * @deprecated Use {@link #getDayLabelFont()} instead
+     */
+    @Deprecated
+    public static Font resolveDayLabelFont(Component component) {
+        return getDayLabelFont();
+    }
+
+    /**
+     * @deprecated Use {@link #getDayButtonFont()} instead
+     */
+    @Deprecated
+    public static Font resolveDayButtonFont(Component component) {
+        return getDayButtonFont();
+    }
+
+    /**
+     * @deprecated Use {@link #getMonthButtonFont()} instead
+     */
+    @Deprecated
+    public static Font resolveMonthButtonFont(Component component) {
+        return getMonthButtonFont();
+    }
+
+    /**
+     * @deprecated Use {@link #getYearButtonFont()} instead
+     */
+    @Deprecated
+    public static Font resolveYearButtonFont(Component component) {
+        return getYearButtonFont();
     }
 }

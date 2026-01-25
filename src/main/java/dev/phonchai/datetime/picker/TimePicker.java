@@ -324,7 +324,8 @@ public class TimePicker extends PanelPopupEditor implements TimeSelectionModelLi
     private void installEditor(JFormattedTextField editor) {
         JToolBar toolBar = new JToolBar();
         editorButton = new JButton(
-                editorIcon != null ? editorIcon : Utils.createIcon("com/sfis/datetime/icon/clock.svg", 0.38f));
+                editorIcon != null ? editorIcon
+                        : Utils.createIcon("dev/phonchai/datetime/picker/icon/clock.svg", 0.38f));
         toolBar.add(editorButton);
         editorButton.addActionListener(e -> {
             if (editor.isEnabled()) {

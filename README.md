@@ -1,6 +1,6 @@
-# DateTime Picker Library
+# Modern Swing DateTime Picker
 
-A reusable Thai Buddhist calendar DateTime picker component for Java Swing desktop UIs with FlatLaf integration.
+The most advanced, comprehensive, and modern Date-Time picker component for Java Swing desktop UIs. Featuring full support for the Thai Buddhist Era (พ.ศ.) and seamless integration with FlatLaf.
 
 ## Features
 
@@ -10,6 +10,7 @@ A reusable Thai Buddhist calendar DateTime picker component for Java Swing deskt
 - 🇹🇭 **Thai Buddhist Calendar** - Native พ.ศ. (Buddhist Era) support
 - 🌐 **Multi-language** - Thai and English localization
 - 🎨 **FlatLaf Integration** - Modern look with dark/light theme support
+- 🔧 **Thai Date/Time Formatting** - Built-in utilities for พ.ศ. formatting
 
 ## Requirements
 
@@ -23,12 +24,47 @@ A reusable Thai Buddhist calendar DateTime picker component for Java Swing deskt
 ```xml
 <dependency>
     <groupId>dev.phonchai</groupId>
-    <artifactId>datetime-picker</artifactId>
-    <version>1.0.0</version>
+    <artifactId>modern-swing-datetime-picker</artifactId>
+    <version>1.1.0</version>
 </dependency>
 ```
 
 ## Usage
+
+### DatePickerField (Recommended)
+```java
+import dev.phonchai.datetime.picker.DatePickerField;
+
+DatePickerField dateField = new DatePickerField("เลือกวันที่");
+panel.add(dateField);
+
+// Get date
+LocalDate date = dateField.getSelectedDate();
+
+// Get date as Thai Buddhist Era (พ.ศ.)
+String thaiDate = dateField.getSelectedDateAsBuddhistEra();     // "24/01/2569"
+String fullThai = dateField.getSelectedDateAsFullThai();        // "24 มกราคม 2569"
+String custom = dateField.getSelectedDateAsBuddhistEra("d MMM yyyy");  // "24 ม.ค. 2569"
+
+// Get date as ISO for API
+String isoDate = dateField.getSelectedDateAsIso();              // "2026-01-24"
+```
+
+### TimePickerField
+```java
+import dev.phonchai.datetime.picker.TimePickerField;
+
+TimePickerField timeField = new TimePickerField("เลือกเวลา", true); // 24-hour
+panel.add(timeField);
+
+// Get time
+LocalTime time = timeField.getSelectedTime();
+
+// Get time as string
+String timeStr = timeField.getSelectedTimeAsString();           // "14:30"
+String timeThai = timeField.getSelectedTimeAsThai();            // "14:30 น."
+String custom = timeField.getSelectedTimeAsString("HH:mm:ss");  // "14:30:00"
+```
 
 ### Basic DatePicker
 ```java
@@ -75,26 +111,31 @@ timePicker.addTimeSelectionListener(e -> {
 LocalTime time = timePicker.getSelectedTime();
 ```
 
-### DatetimePicker
+### Thai Buddhist Era Utility
 ```java
-import dev.phonchai.datetime.picker.DatetimePicker;
+import dev.phonchai.datetime.picker.util.ThaiBuddhistDateUtils;
 
-DatetimePicker datetimePicker = new DatetimePicker();
-datetimePicker.setLanguage(PickerLanguage.THAI);
+LocalDate date = LocalDate.of(2026, 1, 24);
+LocalTime time = LocalTime.of(14, 30);
 
-// Get date and time
-LocalDate date = datetimePicker.getDatePicker().getSelectedDate();
-LocalTime time = datetimePicker.getTimePicker().getSelectedTime();
-```
+// Date formatting
+String thaiDate = ThaiBuddhistDateUtils.formatAsThaiDate(date);       // "24/01/2569"
+String fullThai = ThaiBuddhistDateUtils.formatAsThaiDateFull(date);   // "24 มกราคม 2569"
+String isoDate = ThaiBuddhistDateUtils.formatAsIso(date);             // "2026-01-24"
+String custom = ThaiBuddhistDateUtils.formatAsBuddhistEra(date, "d MMM yy");  // "24 ม.ค. 69"
 
-### With Text Field Editor
-```java
-JFormattedTextField textField = new JFormattedTextField();
-DatePicker picker = new DatePicker();
-picker.setEditor(textField);
+// Time formatting
+String timeStr = ThaiBuddhistDateUtils.formatTime(time);              // "14:30"
+String timeThai = ThaiBuddhistDateUtils.formatTimeWithSuffix(time);   // "14:30 น."
 
-// The text field will sync with the picker
-panel.add(textField);
+// DateTime combining
+LocalDateTime dateTime = ThaiBuddhistDateUtils.combine(date, time);
+String thaiDateTime = ThaiBuddhistDateUtils.formatAsThaiDateTime(dateTime);   // "24/01/2569 14:30"
+String isoDateTime = ThaiBuddhistDateUtils.formatAsIsoDateTime(dateTime);     // "2026-01-24T14:30:00"
+
+// Conversion helpers
+LocalDate buddhistDate = ThaiBuddhistDateUtils.toBuddhistEraDate(date);  // +543 years
+LocalDate isoDateBack = ThaiBuddhistDateUtils.toIsoDate(buddhistDate);   // -543 years
 ```
 
 ### Global Language Configuration
@@ -119,27 +160,44 @@ UIManager.put(PickerLanguage.UI_KEY_LANGUAGE, PickerLanguage.THAI);
 
 ## API Reference
 
-### DatePicker
+### DatePickerField
 
 | Method | Description |
 |--------|-------------|
-| `setSelectedDate(LocalDate)` | Set the selected date |
-| `getSelectedDate()` | Get the selected date |
-| `setDateSelectionMode(DateSelectionMode)` | Set single or range mode |
-| `setLanguage(PickerLanguage)` | Set Thai or English |
-| `setDateFormat(String)` | Set date format pattern |
-| `setEditor(JFormattedTextField)` | Attach text field editor |
-| `setDateSelectionAble(DateSelectionAble)` | Set date selection constraints |
+| `getSelectedDate()` | Get selected date as LocalDate |
+| `getSelectedDateAsBuddhistEra()` | Get date as "24/01/2569" |
+| `getSelectedDateAsBuddhistEra(pattern)` | Get date with custom pattern |
+| `getSelectedDateAsFullThai()` | Get date as "24 มกราคม 2569" |
+| `getSelectedDateAsIso()` | Get date as "2026-01-24" |
 
-### TimePicker
+### TimePickerField
 
 | Method | Description |
 |--------|-------------|
-| `setSelectedTime(LocalTime)` | Set the selected time |
-| `getSelectedTime()` | Get the selected time |
-| `set24HourView(boolean)` | Toggle 12h/24h format |
-| `setLanguage(PickerLanguage)` | Set Thai or English |
-| `setEditor(JFormattedTextField)` | Attach text field editor |
+| `getSelectedTime()` | Get selected time as LocalTime |
+| `getSelectedTimeAsString()` | Get time as "14:30" |
+| `getSelectedTimeAsString(pattern)` | Get time with custom pattern |
+| `getSelectedTimeAsThai()` | Get time as "14:30 น." |
+
+### ThaiBuddhistDateUtils
+
+| Method | Description |
+|--------|-------------|
+| `formatAsThaiDate(date)` | Format as "24/01/2569" |
+| `formatAsThaiDateFull(date)` | Format as "24 มกราคม 2569" |
+| `formatAsIso(date)` | Format as "2026-01-24" |
+| `formatAsBuddhistEra(date, pattern)` | Format with custom pattern |
+| `formatTime(time)` | Format as "14:30" |
+| `formatTimeWithSuffix(time)` | Format as "14:30 น." |
+| `combine(date, time)` | Combine to LocalDateTime |
+| `formatAsThaiDateTime(dt)` | Format as "24/01/2569 14:30" |
+| `toBuddhistEraDate(date)` | Convert ISO → Buddhist Era |
+| `toIsoDate(buddhistDate)` | Convert Buddhist Era → ISO |
+
+## Credits
+
+This library is based on [DJ-Raven's swing-datetime-picker](https://github.com/DJ-Raven/swing-datetime-picker).
+Modified to support Thai Buddhist Era (พ.ศ.) calendar system.
 
 ## License
 
