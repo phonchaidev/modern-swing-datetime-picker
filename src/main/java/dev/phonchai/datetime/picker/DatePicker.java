@@ -724,6 +724,17 @@ public class DatePicker extends PanelPopupEditor
                     showPopup();
                 }
             });
+
+            editor.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent e) {
+                    if (editor.isEnabled()) {
+                        editor.grabFocus();
+                        showPopup();
+                    }
+                }
+            });
+
             InputUtils.useDateInput(
                     editor,
                     dateFormatPattern,

@@ -25,7 +25,7 @@ The most advanced, comprehensive, and modern Date-Time picker component for Java
 <dependency>
     <groupId>dev.phonchai</groupId>
     <artifactId>modern-swing-datetime-picker</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
 </dependency>
 ```
 

@@ -333,6 +333,17 @@ public class TimePicker extends PanelPopupEditor implements TimeSelectionModelLi
                 showPopup();
             }
         });
+
+        editor.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (editor.isEnabled()) {
+                    editor.grabFocus();
+                    showPopup();
+                }
+            }
+        });
+
         InputUtils.useTimeInput(editor, panelClock.isUse24hour(), getDisplayLocale(), header::isAm, getValueCallback(),
                 getInputValidationListener());
         setEditorValue();
@@ -480,6 +491,8 @@ public class TimePicker extends PanelPopupEditor implements TimeSelectionModelLi
         if (!timeSelectionModel.isSelected() && e.getAction() == TimeSelectionModelEvent.HOUR_MINUTE) {
             panelClock.setHourSelectionView(true);
             header.setHourSelectionView(true);
+        } else if (timeSelectionModel.isSelected() && !isHourSelectionView()) {
+            closePopup();
         }
         panelClock.updateClock();
         header.updateHeader();
